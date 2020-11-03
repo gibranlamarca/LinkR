@@ -13,10 +13,7 @@ export function PostContextProvider(props){
     const headers = {
         'user-token': userData.token
     }
-    console.log(posts);
-    useEffect(()=> {
-        getLikedPosts();
-    },[])
+    
     function getLikedPosts(){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/liked`, {headers});
         request.then((response) => setLikedPosts(response.data.posts)).catch(e=>alert('Erro ao buscar liked posts'));
@@ -46,7 +43,7 @@ export function PostContextProvider(props){
         request.then((response) => getLikedPosts()).catch(e=>console.log(e));
     }
     return(
-        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,getUserPosts,likedPosts,like,dislike}}>
+        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,getUserPosts,likedPosts,like,dislike,getLikedPosts}}>
             {props.children}
         </PostContext.Provider>
     );
