@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown,IoIosSearch } from "react-icons/io";
 import {Link} from 'react-router-dom';
 export default function Topbar(){
     const [DropMenu,SetDropMenu] = useState(false);
@@ -11,6 +11,12 @@ export default function Topbar(){
             <h1>
                 <Link to='/timeline'>linkr</Link>
             </h1>
+
+            <div>
+                <input placeholder='Search for people and friends'/>
+            </div>
+            
+            
             <div onClick={() => SetDropMenu(!DropMenu)}>
                 <Menu
                  opacity={DropMenu? '1':'0'}
@@ -57,6 +63,21 @@ const Header = styled.header`
         width: 50px;
         border-radius: 50%;
     }
+    input{
+        height:40px;
+        width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: 'Lato',sans-serif;
+        font-size: 19px;
+        line-height:22.8px;
+        position:relative;    
+        &::placeholder{
+            color: #C6C6C6;
+        }
+    }
+
+    
     @media (max-width: 600px){
        h1{
            font-size: 10vw;

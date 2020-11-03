@@ -13,28 +13,34 @@ export default function TimelineSection(props) {
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [showInput, setShowInput] = useState(false);
     const [userProfile, setUserProfile] = useState({'status':false,'followed':false});
+    
     useEffect(() => {
         getLikedPosts();
         choosePosts();
     }, [title, hashtag, id])
 
     function choosePosts() {
+        
         if (title === 'timeline') {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
+            setUserProfile({...userProfile,'status':false});
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
             getMyPosts();
+            setUserProfile({...userProfile,'status':false});
         } else if (title === 'my likes') {
             setDisplayTitle(title);
             setShowInput(false);
             setPosts(likedPosts);
+            setUserProfile({...userProfile,'status':false});
         } else if (hashtag) {
             setDisplayTitle(`# ${hashtag}`);
             setShowInput(false);
             getHashtagPosts(hashtag);
+            setUserProfile({...userProfile,'status':false});
         } else if (id) {
             setShowInput(false);
             getUserPosts(id);
