@@ -49,6 +49,7 @@ const InputPostBox = styled.div`
     border-radius: 16px;
     width: 40vw;
     height: 45%;
+    margin-bottom: 20px;
     @media (max-width: 600px){
         width: 100%;
         border-radius: 0px;
