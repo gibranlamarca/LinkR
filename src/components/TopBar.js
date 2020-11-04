@@ -1,20 +1,39 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import { IoIosArrowDown,IoIosSearch } from "react-icons/io";
 import {Link} from 'react-router-dom';
+import axios from 'axios';
 export default function Topbar(){
     const [DropMenu,SetDropMenu] = useState(false);
     const {userData,logOut} = useContext(UserContext);
+    const [searchInput,setSearchInput] = useState('');
+    const [filteredUsers,setFilteredUsers] = useState([]);
+    useEffect(()=>{
+        getFilteredUsers();
+    },[searchInput])
+    function getFilteredUsers(){
+        const headers = {'user-token':userData.token};
+        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/search?username=${searchInput}`,{headers})
+        request.then((response)=>setFilteredUsers(response.data.users)).catch(e=>console.log(e));
+    }
     return(
         <Header>
             <h1>
                 <Link to='/timeline'>linkr</Link>
             </h1>
 
-            <div>
-                <input placeholder='Search for people and friends'/>
-            </div>
+            <InputContainer display={(searchInput.length===0 || filteredUsers.length===0) ? 'none' : 'block'}>
+                <input placeholder='Search for people and friends' onChange={e=>setSearchInput(e.target.value)} value={searchInput}/>
+                <ul>
+                    {filteredUsers.map(user=>
+                        <li>
+                            <img src={user.avatar}/>
+                            <span>{user.username}</span>
+                        </li>
+                    )}
+                </ul>
+            </InputContainer>
             
             
             <div onClick={() => SetDropMenu(!DropMenu)}>
@@ -36,7 +55,32 @@ export default function Topbar(){
         </Header>
     );
 }
-
+const InputContainer = styled.div`
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    ul{
+        position:absolute;
+        top:40px;
+        width:100%;
+        background: lightgray;
+        display: ${props => props.display};
+        border-radius:5px;
+        padding: 15px;
+    }
+    input{
+        height:40px;
+        width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: 'Lato',sans-serif;
+        font-size: 19px;
+        line-height:22.8px;  
+        &::placeholder{
+            color: #C6C6C6;
+        }
+    }
+`
 const Header = styled.header`
     width: 100%;
     display:flex;
@@ -63,20 +107,6 @@ const Header = styled.header`
         width: 50px;
         border-radius: 50%;
     }
-    input{
-        height:40px;
-        width: 400px;
-        padding: 10px;
-        border-radius: 5px;
-        font-family: 'Lato',sans-serif;
-        font-size: 19px;
-        line-height:22.8px;
-        position:relative;    
-        &::placeholder{
-            color: #C6C6C6;
-        }
-    }
-
     
     @media (max-width: 600px){
        h1{

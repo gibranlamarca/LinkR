@@ -74,6 +74,8 @@ export default function TimelineSection(props) {
                 </div>
                 {followed === null ? ''
                     :
+                    userData.id == id ? ''
+                    :
                     followed ?
                     <FollowBtn color= 'red' onClick={() => {setButtonDisabled(true);unfollowUser()}}>
                         Unfollow
