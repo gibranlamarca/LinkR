@@ -6,18 +6,16 @@ import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 export default function TimelineSection(props) {
-    const { getPosts, getMyPosts, getHashtagPosts, getUserPosts, posts, setPosts, likedPosts, getLikedPosts } = useContext(PostContext);
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts} = useContext(PostContext);
     const { title } = props;
     const { hashtag } = useParams();
-    const { id } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [showInput, setShowInput] = useState(false);
-    const [userProfile, setUserProfile] = useState({'status':false,'followed':false});
     
     useEffect(() => {
         getLikedPosts();
         choosePosts();
-    }, [title, hashtag, id])
+    }, [title, hashtag])
 
     function choosePosts() {
         
@@ -25,50 +23,30 @@ export default function TimelineSection(props) {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
-            setUserProfile({...userProfile,'status':false});
+
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
             getMyPosts();
-            setUserProfile({...userProfile,'status':false});
+
         } else if (title === 'my likes') {
             setDisplayTitle(title);
             setShowInput(false);
             setPosts(likedPosts);
-            setUserProfile({...userProfile,'status':false});
+
         } else if (hashtag) {
             setDisplayTitle(`# ${hashtag}`);
             setShowInput(false);
             getHashtagPosts(hashtag);
-            setUserProfile({...userProfile,'status':false});
-        } else if (id) {
-            setShowInput(false);
-            getUserPosts(id);
-            setDisplayTitle(`${posts[0].user.username}'s Posts`);
-            setUserProfile({...userProfile,'status':true});
+
         }
     }
-    function followBtnClick(){
-        setUserProfile({...userProfile,'followed': !userProfile.followed});
-    }
+
     return (
         <Page >
-            {userProfile.status ?
-                <header>
-                    <div>
-                        <img src={posts[0].user.avatar} />
-                        <h1 className="title">{displayTitle}</h1>
-                    </div>
-                    <FollowBtn color= {userProfile.followed ? 'red' : '#1877F2'} onClick={followBtnClick}>
-                        {userProfile.followed ? 'Unfollow' : 'Follow'}
-                    </FollowBtn>
-                </header>
-                :
                 <header>
                     <h1 className="title">{displayTitle}</h1>
                 </header>
-            }
-
             <Section>
                 <PostsSection>
                     {showInput ? <InputPostBoxSection /> : ''}
@@ -127,13 +105,3 @@ const PostsSection = styled.div`
     }
 `;
 
-const FollowBtn = styled.button`
-    background: ${props => props.color};
-    padding: 5px 30px;
-    border-radius:5px;
-    text-align:center;
-    font-size: 16px;
-    color: #fff;
-    font-family: 'Lato', sans-serif;
-    cursor:pointer;
-`
