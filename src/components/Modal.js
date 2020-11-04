@@ -42,7 +42,7 @@ export default function Modal({
             <BackButton onClick={() => setModalIsOpen(!modalIsOpen)}>
               Não, voltar
             </BackButton>
-            <DeleteButton onClick={handleDelete}>Sim, excluir</DeleteButton>
+            <DeleteButton onClick={() => handleDelete()}>Sim, excluir</DeleteButton>
           </ButtonsContainer>
         </>
       )}
