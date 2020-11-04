@@ -20,6 +20,7 @@ export function UserContextProvider(props){
         token: "34d11bbf-f9e9-4934-9b21-ccaada2a1536",
         username: "HerickM"
     };
+    
     const inputStruct = {
         link: '',
         text:''

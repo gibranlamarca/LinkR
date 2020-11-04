@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TrendingTopics from './TrendingTopics';
 import InputPostBoxSection from './InputPostBoxSection';
@@ -6,47 +6,50 @@ import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 export default function TimelineSection(props) {
-    const {getPosts,getMyPosts,getHashtagPosts,getUserPosts,posts,setPosts,likedPosts,getLikedPosts} = useContext(PostContext);
-    const {title} = props;
-    const {hashtag} = useParams();
-    const {id} = useParams();
-    const [displayTitle,setDisplayTitle] = useState('timeline');
-    const [showInput,setShowInput] = useState(false);
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts} = useContext(PostContext);
+    const { title } = props;
+    const { hashtag } = useParams();
+    const [displayTitle, setDisplayTitle] = useState('timeline');
+    const [showInput, setShowInput] = useState(false);
     
     useEffect(() => {
         getLikedPosts();
         choosePosts();
-    }, [title, hashtag, id])
+    }, [title, hashtag])
 
-    function choosePosts(){
-        if(title === 'timeline'){
+    function choosePosts() {
+        
+        if (title === 'timeline') {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
-        } else if(title === 'my posts'){
+
+        } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
             getMyPosts();
-        } else if(title === 'my likes'){
+
+        } else if (title === 'my likes') {
             setDisplayTitle(title);
             setShowInput(false);
             setPosts(likedPosts);
-        } else if(hashtag){
+
+        } else if (hashtag) {
             setDisplayTitle(`# ${hashtag}`);
             setShowInput(false);
             getHashtagPosts(hashtag);
-        } else if(id){
-            setShowInput(false);
-            getUserPosts(id);
-            setDisplayTitle(`${posts[0].user.username}'s Posts`);
+
         }
     }
+
     return (
-        <Page>
-            <h1 className="title">{displayTitle}</h1>
+        <Page >
+                <header>
+                    <h1 className="title">{displayTitle}</h1>
+                </header>
             <Section>
                 <PostsSection>
-                    {showInput ?  <InputPostBoxSection /> :''}
+                    {showInput ? <InputPostBoxSection /> : ''}
                     <PostBox />
                 </PostsSection>
                 <TrendingTopics />
@@ -58,10 +61,25 @@ export default function TimelineSection(props) {
 const Page = styled.div`
     color:#FFF;
     padding-top:100px;
-    .title{
-        font-size: 3vw;
-        font-family: 'Oswald', sans-serif;
+    header{
         margin-bottom: 20px;
+        display:flex;
+        justify-content: space-between;
+        align-items:center;
+        img{
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        div{
+            display:flex;
+            align-items:center;
+        }
+        .title{
+            font-size: 3vw;
+            font-family: 'Oswald', sans-serif;
+        }
     }
     @media (max-width: 600px){
         width: 100%;
@@ -86,3 +104,4 @@ const PostsSection = styled.div`
         width: 100%;
     }
 `;
+

@@ -96,7 +96,7 @@ export default function PostBox() {
 
 
 const Post = styled.div`
-    margin-top: 20px;
+    margin-bottom:20px;
     display: flex;
     background: #151515;
     border-radius: 16px;

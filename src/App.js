@@ -2,7 +2,7 @@ import React from 'react';
 import Login from './pages/Login';
 import Timeline from './pages/Timeline';
 import TimelineSection from './components/TimelineSection';
-
+import UserProfile from './components/UserProfile';
 import {
     BrowserRouter as Router,
     Switch,
@@ -37,7 +37,7 @@ export default function App(){
                         </Route>
                         <Route path='/user/:id'>
                             <Timeline >
-                                <TimelineSection /> 
+                                <UserProfile /> 
                             </Timeline>
                         </Route>
                         <Route path='/my-likes' exact>
