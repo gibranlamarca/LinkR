@@ -1,59 +1,93 @@
-import React, { useContext,useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components';
 import PostContext from '../contexts/PostContext';
-import {Link} from 'react-router-dom';
+import UserContext from '../contexts/UserContext';
+import { Link } from 'react-router-dom';
 import ReactHashtag from "react-hashtag";
 import { useHistory } from 'react-router-dom';
-import { IoIosHeartEmpty,IoIosHeart } from "react-icons/io";
+import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
+import { AiFillDelete } from "react-icons/ai";
 import axios from 'axios';
+import Modal from "./Modal";
+
 export default function PostBox() {
-    const { posts,likedPosts,like,dislike,setPosts } = useContext(PostContext);
+    const { posts, likedPosts, like, dislike, setPosts } = useContext(PostContext);
     const history = useHistory();
-    function goToHashtag(val){
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const {userData} = useContext(UserContext);
+
+    function errorHandle(error) {
+        console.error(error);
+        setIsLoading(false);
+        setModalIsOpen(!modalIsOpen);
+        alert("Não foi possível excluir o post")
+    }
+    function handleDelete() {
+        setIsLoading(true);
+        axios.delete(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${post.id}`,
+            { headers: { "user-token": token } }
+        ).catch(errorHandle)
+        setIsLoading(false);
+        setModalIsOpen(!modalIsOpen);
+    }
+    function goToHashtag(val) {
         val = val.slice(1);
         history.push(`/hashtag/${val}`)
     }
-    function liked(id){
+    function liked(id) {
         let isLiked = false;
         likedPosts.forEach(post => {
-            if(post.id === id){
+            if (post.id === id) {
                 isLiked = true;
             }
         });
         return isLiked;
     }
-    if(posts === null){
+    if (posts === null) {
         return <Post><h1>Loading posts...</h1></Post>
-    } else if(posts.length === 0){
+    } else if (posts.length === 0) {
         return <Post><h1>No posts found</h1></Post>
     }
     return (
         <>
             {posts.map((post) => {
-                return(
-                <Post key={post.id} heart={liked(post.id) ? 'red':'blue'}>
-                    <LeftBox>
-                        <Link to={`/user/${post.user.id}`}><img src={post.user.avatar} /></Link>
-                        <div className='likeContainer'>
-                            {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post.id)}/> : <IoIosHeartEmpty onClick={() => like(post.id)}/>}
-                            <p>{post.likes.length}</p>
-                        </div>
-                    </LeftBox>
-                    <RightBox>
-                    <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
-                       <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
-                        <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
-                            <div className='descriptionContainer'>
-                                <p className="titleLink">{post.linkTitle}</p>
-                                <p className="small grey">{post.linkDescription}</p>
-                                <p className="small">{post.link}</p>
+                return (
+                    <Post key={post.id} heart={liked(post.id) ? 'red' : 'blue'}>
+                        <LeftBox>
+                            <Link to={`/user/${post.user.id}`}><img src={post.user.avatar} /></Link>
+                            <div className='likeContainer'>
+                                {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post.id)} /> : <IoIosHeartEmpty onClick={() => like(post.id)} />}
+                                <p>{post.likes.length}</p>
                             </div>
-                            <div className='imgContainer'>
-                                <img src={post.linkImage} />
+                        </LeftBox>
+                        <RightBox>
+                            <div className='usernameAndIcons'>
+                                <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
+                                {userData.id === post.user.id && (
+                                    <AiFillDelete className='trashCan' onClick={() => setModalIsOpen(!modalIsOpen)}/>
+                                )}
+                                <Modal 
+                                modalIsOpen={modalIsOpen}
+                                setModalIsOpen={setModalIsOpen}
+                                handleDelete={handleDelete}
+                                isLoading={isLoading}
+                                />
                             </div>
-                        </ImgBox>
-                    </RightBox>
-                </Post>
+                            <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
+                            <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
+                                <div className='descriptionContainer'>
+                                    <p className="titleLink">{post.linkTitle}</p>
+                                    <p className="small grey">{post.linkDescription}</p>
+                                    <p className="small">{post.link}</p>
+                                </div>
+                                <div className='imgContainer'>
+                                    <img src={post.linkImage} />
+                                </div>
+                            </ImgBox>
+                        </RightBox>
+                    </Post>
                 )
             })}
         </>
@@ -125,6 +159,14 @@ const RightBox = styled.div`
         font-weight:bold;
         color:#FFF;
         cursor:pointer;
+    }
+    .usernameAndIcons{
+        display: flex;
+        justify-content: space-between;
+    }
+    .trashCan{
+        color: white;
+        cursor: pointer;
     }
 `;
 const ImgBox = styled.div`
