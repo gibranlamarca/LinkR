@@ -23,11 +23,12 @@ export default function PostBox() {
         setModalIsOpen(!modalIsOpen);
         alert("Não foi possível excluir o post")
     }
-    function handleDelete() {
+    function handleDelete(post) {
+        console.log(posts);
         setIsLoading(true);
         axios.delete(
             `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${post.id}`,
-            { headers: { "user-token": token } }
+            { headers: { "user-token": userData.token } }
         ).catch(errorHandle)
         setIsLoading(false);
         setModalIsOpen(!modalIsOpen);
@@ -65,13 +66,13 @@ export default function PostBox() {
                         <RightBox>
                             <div className='usernameAndIcons'>
                                 <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
-                                {userData.id === post.user.id && (
+                                {parseInt(userData.id) === post.user.id && (
                                     <AiFillDelete className='trashCan' onClick={() => setModalIsOpen(!modalIsOpen)}/>
                                 )}
                                 <Modal 
                                 modalIsOpen={modalIsOpen}
                                 setModalIsOpen={setModalIsOpen}
-                                handleDelete={handleDelete}
+                                handleDelete={() => handleDelete(post)}
                                 isLoading={isLoading}
                                 />
                             </div>
