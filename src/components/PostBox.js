@@ -72,8 +72,9 @@ export default function PostBox() {
                                 <Modal 
                                 modalIsOpen={modalIsOpen}
                                 setModalIsOpen={setModalIsOpen}
-                                handleDelete={() => handleDelete(post)}
+                                handleDelete={handleDelete}
                                 isLoading={isLoading}
+                                postId={post.id}
                                 />
                             </div>
                             <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
