@@ -81,7 +81,7 @@ export default function PostBox({ choosePosts }) {
                         <LeftBox>
                             <Link to={`/user/${post.user.id}`}><img src={post.user.avatar} /></Link>
                             <div className='likeContainer'>
-                                {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post.id)} /> : <IoIosHeartEmpty onClick={() => like(post.id)} />}
+                                {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post)} /> : <IoIosHeartEmpty className='disliked' onClick={() => like(post)} />}
                                 <p>{post.likes.length}</p>
                             </div>
                         </LeftBox>
@@ -164,6 +164,9 @@ const LeftBox = styled.div`
         }
         .liked{
             color:red;
+        }
+        .liked,.disliked{
+            cursor:pointer;
         }
     }
 `;

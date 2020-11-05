@@ -47,13 +47,21 @@ export function PostContextProvider(props){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/hashtags/${hashtag}/posts`, {headers});
         request.then((response) => setPosts(response.data.posts)).catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
     }
-    function like(id){
-        const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${id}/like`, {},{headers});
-        request.then((response) => getLikedPosts()).catch(e=>console.log(e));
+    function like(post){
+        const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${post.id}/like`, {},{headers});
+        request.then(() => {
+            getLikedPosts();
+            post.likes.push([]);
+            setPosts([...posts]);
+        }).catch(e=>console.log(e));
     }
-    function dislike(id){
-        const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${id}/dislike`,{}, {headers});
-        request.then((response) => getLikedPosts()).catch(e=>console.log(e));
+    function dislike(post){
+        const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${post.id}/dislike`,{}, {headers});
+        request.then(() => {
+            getLikedPosts();
+            post.likes.pop();
+            setPosts([...posts]);
+        }).catch(e=>console.log(e));
     }
     return(
         <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,likedPosts,like,dislike,getLikedPosts,getFollowedUsers,followedUsers,isFollowed}}>
