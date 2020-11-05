@@ -1,29 +1,29 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import PostContext from "../contexts/PostContext";
 
 export default function EditPost({
-    text,
-    setPostText,
-    isEdit,
-    setIsEdit,
+    post,
     userToken,
     currentId,
 }) {
-    const [newTitle, setNewTitle] = useState(text);
+    const {posts,setPosts} = useContext(PostContext);
+    const [newTitle, setNewTitle] = useState(post.text);
     const [isLoading, setIsLoading] = useState(false);
 
     const textAreaRef = useRef(null);
 
     useEffect(() => {
-        if(isEdit) {
+        if(post.isEdit) {
             textAreaRef.current.focus();
         }
-    }, [isEdit]);
+    }, [post.isEdit]);
     function refresh(){
-        setPostText(newTitle);
+        post.text=newTitle;
         setIsLoading(false);
-        setIsEdit(!isEdit)
+        post.isEdit = false;
+        setPosts([...posts]);
     }
     function errorHandle(error) {
         console.error(error);
@@ -34,8 +34,9 @@ export default function EditPost({
     }
     function updatePostTitle(e) {
         if (e.keyCode === 27) {
-            setNewTitle(text);
-            setIsEdit(false);
+            setNewTitle(post.text);
+            post.isEdit = false;
+            setPosts([...posts]);
             return;
         }
         if (e.keyCode === 13) {

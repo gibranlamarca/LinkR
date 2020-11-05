@@ -13,13 +13,13 @@ import Modal from "./Modal";
 import EditTitle from "./EditTitle";
 
 export default function PostBox({ choosePosts }) {
-    const { posts, likedPosts, like, dislike, followedUsers } = useContext(PostContext);
+    const { posts, likedPosts, like, dislike, followedUsers,setPosts } = useContext(PostContext);
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useContext(UserContext);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentId, setCurrentId] = useState(null);
-    const [isEdit, setIsEdit] = useState(false);
+    //const [isEdit, setIsEdit] = useState(false);
     const [postText, setPostText] = useState("");
     function errorHandle(error) {
         console.error(error);
@@ -61,10 +61,12 @@ export default function PostBox({ choosePosts }) {
         setCurrentId(id);
     }
     function editText(post) {
-        setIsEdit(!isEdit);
+        post.isEdit = true;
+        setPosts([...posts]);
         setPostText(post.text);
         setCurrentId(post.id);
     }
+
     return (
         <>
             {modalIsOpen ?
@@ -97,12 +99,9 @@ export default function PostBox({ choosePosts }) {
                                 )}
 
                             </div>
-                            {isEdit ? (
+                            {post.isEdit ? (
                                 <EditTitle
-                                    isEdit={isEdit}
-                                    text={postText}
-                                    setPostText={setPostText}
-                                    setIsEdit={setIsEdit}
+                                    post={post}
                                     userToken={userData.token}
                                     currentId={currentId}
                                 />
