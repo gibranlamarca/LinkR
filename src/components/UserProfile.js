@@ -7,28 +7,35 @@ import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 import UserContext from '../contexts/UserContext';
 export default function TimelineSection(props) {
-    const { getUserPosts, posts, getLikedPosts,getFollowedUsers,followedUsers } = useContext(PostContext);
+    const { posts, getLikedPosts,getFollowedUsers,followedUsers,setPosts } = useContext(PostContext);
     const {userData} = useContext(UserContext);
     const { id } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
+    const [displayImg, setDisplayimg] = useState('');
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [followed,setFollowed] = useState(null);
     const headers = {
         'user-token': userData.token
     };
+    function getUserPosts(){
+        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}/posts`, {headers});
+        request.then((response) => {
+            console.log(response);
+            setPosts(response.data.posts);
+            setDisplayTitle(`${response.data.posts[0].user.username}'s Posts`);
+            setDisplayimg(response.data.posts[0].user.avatar);
+        });
+        request.catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
+    }
     useEffect(() => {
         getFollowedUsers();
         getLikedPosts();
-        getUserPosts(id);
+        getUserPosts();
     }, [])
     useEffect(() => {
         isFollowed();
     }, [followedUsers])
-    useEffect(() => {
-        setDisplayTitle(`${posts[0].user.username}'s Posts`);
-    }, [posts]);
     
-
     function followUser(){
         if(!buttonDisabled){
             setFollowed(true);
@@ -71,7 +78,7 @@ export default function TimelineSection(props) {
         <Page >
             <header>
                 <div>
-                    <img src={posts[0].user.avatar} />
+                    <img src={displayImg} />
                     <h1 className="title">{displayTitle}</h1>
                 </div>
                 {followed === null ? ''

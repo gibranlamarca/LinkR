@@ -23,7 +23,7 @@ export function PostContextProvider(props){
         request.then((response) => setLikedPosts(response.data.posts)).catch(e=>alert('Erro ao buscar liked posts'));
     }
     function getPosts(){
-        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts?offset=0&limit=10`, {headers});
+        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/following/posts`, {headers});
         request.then((response) => setPosts(response.data.posts)).catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
     }
     function getMyPosts(){
@@ -32,10 +32,6 @@ export function PostContextProvider(props){
     }
     function getHashtagPosts(hashtag){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/hashtags/${hashtag}/posts`, {headers});
-        request.then((response) => setPosts(response.data.posts)).catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
-    }
-    function getUserPosts(id){
-        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}/posts`, {headers});
         request.then((response) => setPosts(response.data.posts)).catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
     }
     function like(id){
@@ -47,7 +43,7 @@ export function PostContextProvider(props){
         request.then((response) => getLikedPosts()).catch(e=>console.log(e));
     }
     return(
-        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,getUserPosts,likedPosts,like,dislike,getLikedPosts,getFollowedUsers,followedUsers}}>
+        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,likedPosts,like,dislike,getLikedPosts,getFollowedUsers,followedUsers}}>
             {props.children}
         </PostContext.Provider>
     );

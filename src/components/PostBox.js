@@ -11,7 +11,7 @@ import axios from 'axios';
 import Modal from "./Modal";
 
 export default function PostBox({choosePosts}) {
-    const { posts, likedPosts, like, dislike, setPosts } = useContext(PostContext);
+    const { posts, likedPosts, like, dislike, followedUsers } = useContext(PostContext);
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useContext(UserContext);
@@ -47,6 +47,8 @@ export default function PostBox({choosePosts}) {
     }
     if (posts === null) {
         return <Post><h1>Loading posts...</h1></Post>
+    } else if (followedUsers.length === 0 && posts.length === 0){
+        return <Post><h1>Find people to follow on search!</h1></Post>
     } else if (posts.length === 0) {
         return <Post><h1>No posts found</h1></Post>
     }
