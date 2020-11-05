@@ -8,7 +8,7 @@ import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import PostContext from '../contexts/PostContext';
 export default function Topbar() {
-    const {followedUsers} = useContext(PostContext);
+    const {followedUsers,isFollowed} = useContext(PostContext);
     const [DropMenu, SetDropMenu] = useState(false);
     const { userData, logOut } = useContext(UserContext);
     const [searchInput, setSearchInput] = useState('');
@@ -20,17 +20,18 @@ export default function Topbar() {
         if(searchInput.length === 0) return;
         const headers = { 'user-token': userData.token };
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/search?username=${searchInput}`, { headers })
-        request.then((response) => setFilteredUsers(response.data.users)).catch(e => console.log(e));
+        request.then((response) => {
+            const arr = response.data.users;
+            arr.forEach((user,index) => {
+                if(isFollowed(user.id)){
+                    arr.splice(index,1);
+                    arr.unshift(user);
+                };
+            });
+            setFilteredUsers(response.data.users);
+        }).catch(e => console.log(e));
     }
-    function isFollowed(id) {
-        let state = false;
-        followedUsers.forEach(user => {
-            if (user.id == id) {
-                state = true;
-            }
-        });
-        return state;
-    }
+   
     return (
         <Header>
             <h1>

@@ -16,7 +16,20 @@ export function PostContextProvider(props){
     }
     function getFollowedUsers(){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/follows`, {headers});
-        request.then((response) => {setFollowedUsers(response.data.users);}).catch(e=>console.log(e));
+        request.then((response) => {
+            setFollowedUsers(response.data.users)
+        });
+        request.catch(e=>console.log(e));
+
+    }
+    function isFollowed(id) {
+        let state = false;
+        followedUsers.forEach(user => {
+            if (user.id == id) {
+                state = true;
+            }
+        });
+        return state;
     }
     function getLikedPosts(){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/liked`, {headers});
@@ -43,7 +56,7 @@ export function PostContextProvider(props){
         request.then((response) => getLikedPosts()).catch(e=>console.log(e));
     }
     return(
-        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,likedPosts,like,dislike,getLikedPosts,getFollowedUsers,followedUsers}}>
+        <PostContext.Provider value={{inputPost,setInputPost,posts,setPosts,getPosts,timeline,setTimeline,getMyPosts,getHashtagPosts,likedPosts,like,dislike,getLikedPosts,getFollowedUsers,followedUsers,isFollowed}}>
             {props.children}
         </PostContext.Provider>
     );
