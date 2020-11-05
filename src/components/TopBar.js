@@ -29,16 +29,16 @@ export default function Topbar() {
                 };
             });
             setFilteredUsers(response.data.users);
-        }).catch(e => console.log(e));
+        });
+        request.catch(e => console.log(e));
     }
-   
     return (
         <Header>
             <h1>
                 <Link to='/timeline'>linkr</Link>
             </h1>
 
-            <InputContainer display={(searchInput.length === 0 || filteredUsers.length === 0) ? 'none' : 'block'}>
+            <InputContainer display={(searchInput.length === 0 ) ? 'none' : 'block'}>
                 <DebounceInput
                     minLength={3}
                     debounceTimeout={300}
@@ -46,7 +46,13 @@ export default function Topbar() {
                     onChange={e => setSearchInput(e.target.value)}
                     value={searchInput} />
                 <ul>
-                    {filteredUsers.map(user =>
+                    {filteredUsers.length === 0 ? 
+                    <li>
+                        No users found
+                    </li>
+                    :
+
+                    filteredUsers.map(user =>
                         <li>
                             <Link to={`/user/${user.id}`}>
                                 <img src={user.avatar} />
@@ -54,7 +60,8 @@ export default function Topbar() {
                             </Link>
                             {isFollowed(user.id) ? <div className='followed'>{` • following`}</div> : ''}
                         </li>
-                    )}
+                    )
+                    }
                 </ul>
             </InputContainer>
 
