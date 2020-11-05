@@ -117,4 +117,5 @@ const Button = styled.button`
     font-family: Lato;
     text-align: center;
     font-size: 14px;
+    cursor: pointer;
 `;

@@ -183,6 +183,9 @@ const Menu = styled.div`
     }
     a{
         padding: 10px;
+        &:hover{
+            background:grey;
+        }
     }
     .arrowDown{
         @media(max-width:600px){
