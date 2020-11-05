@@ -16,6 +16,12 @@ export default function TimelineSection(props) {
         getLikedPosts();
         choosePosts();
     }, [title, hashtag,])
+    useEffect(() => {
+        const interval = setInterval(()=>{
+            choosePosts();
+        },15000);
+        return () => clearInterval(interval);
+    }, []);
 
     function choosePosts() {
         
@@ -23,7 +29,7 @@ export default function TimelineSection(props) {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
-
+            
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
