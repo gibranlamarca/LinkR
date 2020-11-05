@@ -7,10 +7,11 @@ import ReactHashtag from "react-hashtag";
 import { useHistory } from 'react-router-dom';
 import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
 import { AiFillDelete } from "react-icons/ai";
+import { TiPencil } from "react-icons/ti";
 import axios from 'axios';
 import Modal from "./Modal";
 
-export default function PostBox({choosePosts}) {
+export default function PostBox({ choosePosts }) {
     const { posts, likedPosts, like, dislike, followedUsers } = useContext(PostContext);
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ export default function PostBox({choosePosts}) {
         axios.delete(
             `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${currentId}`,
             { headers: { "user-token": userData.token } }
-        ).then(()=>choosePosts()).catch(errorHandle)
+        ).then(() => choosePosts()).catch(errorHandle)
         setIsLoading(false);
         setModalIsOpen(!modalIsOpen);
     }
@@ -47,25 +48,25 @@ export default function PostBox({choosePosts}) {
     }
     if (posts === null) {
         return <Post><h1>Loading posts...</h1></Post>
-    } else if (followedUsers.length === 0 && posts.length === 0){
+    } else if (followedUsers.length === 0 && posts.length === 0) {
         return <Post><h1>Find people to follow on search!</h1></Post>
     } else if (posts.length === 0) {
         return <Post><h1>No posts found</h1></Post>
     }
-    function openModal(id){
+    function openModal(id) {
         setModalIsOpen(true);
         setCurrentId(id);
     }
     return (
         <>
-            {modalIsOpen ? 
+            {modalIsOpen ?
                 <Modal
-                modalIsOpen={modalIsOpen}
-                setModalIsOpen={setModalIsOpen}
-                handleDelete={handleDelete}
-                isLoading={isLoading}
-            />
-            : null
+                    modalIsOpen={modalIsOpen}
+                    setModalIsOpen={setModalIsOpen}
+                    handleDelete={handleDelete}
+                    isLoading={isLoading}
+                />
+                : null
             }
             {posts.map((post) => {
                 return (
@@ -81,9 +82,10 @@ export default function PostBox({choosePosts}) {
                             <div className='usernameAndIcons'>
                                 <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
                                 {parseInt(userData.id) === post.user.id && (
-                                    <>
+                                    <span>
+                                        <TiPencil className='editTitle' />
                                         <AiFillDelete className='trashCan' onClick={() => openModal(post.id)} />
-                                        </>
+                                    </span>
                                 )}
 
                             </div>
@@ -179,6 +181,11 @@ const RightBox = styled.div`
     .trashCan{
         color: white;
         cursor: pointer;
+    }
+    .editTitle{
+        color: white;
+        cursor: pointer;
+        margin-right: 8px;
     }
 `;
 const ImgBox = styled.div`
