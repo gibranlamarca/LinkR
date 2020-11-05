@@ -13,6 +13,7 @@ export default function Topbar() {
     const { userData, logOut } = useContext(UserContext);
     const [searchInput, setSearchInput] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);
+    const [showSearchResult,setShowSearchResult] = useState(false);
     useEffect(() => {
         getFilteredUsers();
     }, [searchInput])
@@ -38,12 +39,16 @@ export default function Topbar() {
                 <Link to='/timeline'>linkr</Link>
             </h1>
 
-            <InputContainer display={(searchInput.length === 0 ) ? 'none' : 'block'}>
+            <InputContainer display={(!showSearchResult) ? 'none' : 'block'}>
                 <DebounceInput
                     minLength={3}
                     debounceTimeout={300}
                     placeholder='Search for people and friends'
-                    onChange={e => setSearchInput(e.target.value)}
+                    onChange={e => {
+                        setSearchInput(e.target.value)
+                    }}
+                    onFocus={()=> setShowSearchResult(true)}
+                    onBlur={()=>setShowSearchResult(false)}
                     value={searchInput} />
                 <ul>
                     {filteredUsers.length === 0 ? 
@@ -66,7 +71,7 @@ export default function Topbar() {
             </InputContainer>
 
 
-            <div onClick={() => SetDropMenu(!DropMenu)}>
+            <div onClick={() => SetDropMenu(!DropMenu)} >
                 <Menu
                     opacity={DropMenu ? '1' : '0'}
                     translate={DropMenu ? 'translateY(0)' : 'translateY(-20px)'}
