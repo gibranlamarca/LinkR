@@ -1,53 +1,75 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
-import { IoIosArrowDown,IoIosSearch } from "react-icons/io";
-import {Link} from 'react-router-dom';
+import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
+import {GoPrimitiveDot} from 'react-icons/go';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-export default function Topbar(){
-    const [DropMenu,SetDropMenu] = useState(false);
-    const {userData,logOut} = useContext(UserContext);
-    const [searchInput,setSearchInput] = useState('');
-    const [filteredUsers,setFilteredUsers] = useState([]);
-    useEffect(()=>{
+import { DebounceInput } from 'react-debounce-input';
+import PostContext from '../contexts/PostContext';
+export default function Topbar() {
+    const {followedUsers} = useContext(PostContext);
+    const [DropMenu, SetDropMenu] = useState(false);
+    const { userData, logOut } = useContext(UserContext);
+    const [searchInput, setSearchInput] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    useEffect(() => {
         getFilteredUsers();
-    },[searchInput])
-    function getFilteredUsers(){
-        const headers = {'user-token':userData.token};
-        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/search?username=${searchInput}`,{headers})
-        request.then((response)=>setFilteredUsers(response.data.users)).catch(e=>console.log(e));
+    }, [searchInput])
+    function getFilteredUsers() {
+        if(searchInput.length === 0) return;
+        const headers = { 'user-token': userData.token };
+        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/search?username=${searchInput}`, { headers })
+        request.then((response) => setFilteredUsers(response.data.users)).catch(e => console.log(e));
     }
-    return(
+    function isFollowed(id) {
+        let state = false;
+        followedUsers.forEach(user => {
+            if (user.id == id) {
+                state = true;
+            }
+        });
+        return state;
+    }
+    return (
         <Header>
             <h1>
                 <Link to='/timeline'>linkr</Link>
             </h1>
 
-            <InputContainer display={(searchInput.length===0 || filteredUsers.length===0) ? 'none' : 'block'}>
-                <input placeholder='Search for people and friends' onChange={e=>setSearchInput(e.target.value)} value={searchInput}/>
+            <InputContainer display={(searchInput.length === 0 || filteredUsers.length === 0) ? 'none' : 'block'}>
+                <DebounceInput
+                    minLength={3}
+                    debounceTimeout={300}
+                    placeholder='Search for people and friends'
+                    onChange={e => setSearchInput(e.target.value)}
+                    value={searchInput} />
                 <ul>
-                    {filteredUsers.map(user=>
+                    {filteredUsers.map(user =>
                         <li>
-                            <img src={user.avatar}/>
-                            <span>{user.username}</span>
+                            <Link to={`/user/${user.id}`}>
+                                <img src={user.avatar} />
+                                <div>{user.username}</div>
+                            </Link>
+                            {isFollowed(user.id) ? <div className='followed'>{` • following`}</div> : ''}
                         </li>
                     )}
                 </ul>
             </InputContainer>
-            
-            
+
+
             <div onClick={() => SetDropMenu(!DropMenu)}>
                 <Menu
-                 opacity={DropMenu? '1':'0'}
-                 translate={DropMenu? 'translateY(0)':'translateY(-20px)'}
-                 rotate={DropMenu? 'rotate(180deg)':'rotate(0)'}
-                 display={DropMenu? 'flex' : 'none'}
+                    opacity={DropMenu ? '1' : '0'}
+                    translate={DropMenu ? 'translateY(0)' : 'translateY(-20px)'}
+                    rotate={DropMenu ? 'rotate(180deg)' : 'rotate(0)'}
+                    display={DropMenu ? 'flex' : 'none'}
                 >
-                    <div><IoIosArrowDown  class="arrowDown"/></div>
+                    <div><IoIosArrowDown class="arrowDown" /></div>
                     <nav>
                         <Link to='/my-posts'>My posts</Link>
                         <Link to='/my-likes'>My likes</Link>
-                        <Link to='/' onClick={()=>logOut()}>Logout</Link>
+                        <Link to='/' onClick={() => logOut()}>Logout</Link>
                     </nav>
                 </Menu>
                 <img src={userData.avatar} />
@@ -59,14 +81,27 @@ const InputContainer = styled.div`
     display:flex;
     flex-direction:column;
     position:relative;
+    font-family: 'Lato',sans-serif;
+    
     ul{
         position:absolute;
-        top:40px;
+        top:35px;
         width:100%;
-        background: lightgray;
+        background: #e5e5e5;
         display: ${props => props.display};
         border-radius:5px;
         padding: 15px;
+        li{
+            display:flex;
+            align-items:center;
+            margin-bottom:10px;
+        }
+        a{
+            display:flex;
+        }
+        img{
+            margin-right:10px;
+        }
     }
     input{
         height:40px;
@@ -76,9 +111,14 @@ const InputContainer = styled.div`
         font-family: 'Lato',sans-serif;
         font-size: 19px;
         line-height:22.8px;  
+        z-index:99;
         &::placeholder{
             color: #C6C6C6;
         }
+    }
+    .followed{
+        margin-left:5px;
+        color: #C5C5C5;
     }
 `
 const Header = styled.header`

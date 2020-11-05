@@ -7,12 +7,11 @@ import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 import UserContext from '../contexts/UserContext';
 export default function TimelineSection(props) {
-    const { getUserPosts, posts, getLikedPosts } = useContext(PostContext);
+    const { getUserPosts, posts, getLikedPosts,getFollowedUsers,followedUsers } = useContext(PostContext);
     const {userData} = useContext(UserContext);
     const { id } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [buttonDisabled, setButtonDisabled] = useState(false);
-    const [followedUsers,setFollowedUsers] = useState([]);
     const [followed,setFollowed] = useState(null);
     const headers = {
         'user-token': userData.token
@@ -28,16 +27,16 @@ export default function TimelineSection(props) {
     useEffect(() => {
         setDisplayTitle(`${posts[0].user.username}'s Posts`);
     }, [posts]);
-    function getFollowedUsers(){
-        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/follows`, {headers});
-        request.then((response) => {setFollowedUsers(response.data.users);}).catch(e=>console.log(e));
-    }
+    
 
     function followUser(){
         if(!buttonDisabled){
             setFollowed(true);
             const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}/follow`,{}, {headers});
-            request.then(() => setButtonDisabled(false))
+            request.then(() => {
+                getFollowedUsers();
+              setButtonDisabled(false)
+            });
             request.catch(e=>{
                 alert('Error, please refresh the page');
                 setButtonDisabled(false);
@@ -48,7 +47,10 @@ export default function TimelineSection(props) {
         if(!buttonDisabled){
             setFollowed(false);
             const request = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}/unfollow`,{}, {headers});
-            request.then(() => setButtonDisabled(false))
+            request.then(() => {
+                getFollowedUsers();
+                setButtonDisabled(false)
+            });
             request.catch(e=>{
                 alert('Error, please refresh the page');
                 setButtonDisabled(false);

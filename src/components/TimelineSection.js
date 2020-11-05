@@ -6,12 +6,13 @@ import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 export default function TimelineSection(props) {
-    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts} = useContext(PostContext);
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts,getFollowedUsers} = useContext(PostContext);
     const { title } = props;
     const { hashtag } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [showInput, setShowInput] = useState(false);
     useEffect(() => {
+        getFollowedUsers();
         getLikedPosts();
         choosePosts();
     }, [title, hashtag,])
