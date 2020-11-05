@@ -22,9 +22,9 @@ export default function Modal({
   modalIsOpen,
   setModalIsOpen,
   handleDelete,
-  isLoading,
-  postId,
+  isLoading
 }) {
+
   return (
     <ReactModal
       isOpen={modalIsOpen}
@@ -42,7 +42,7 @@ export default function Modal({
             <BackButton onClick={() => setModalIsOpen(!modalIsOpen)}>
               Não, voltar
             </BackButton>
-            <DeleteButton onClick={() => handleDelete(postId[0])}>Sim, excluir</DeleteButton>
+            <DeleteButton onClick={() => handleDelete()}>Sim, excluir</DeleteButton>
           </ButtonsContainer>
         </>
       )}

@@ -11,11 +11,10 @@ export default function TimelineSection(props) {
     const { hashtag } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [showInput, setShowInput] = useState(false);
-    
     useEffect(() => {
         getLikedPosts();
         choosePosts();
-    }, [title, hashtag])
+    }, [title, hashtag,])
 
     function choosePosts() {
         
@@ -50,7 +49,7 @@ export default function TimelineSection(props) {
             <Section>
                 <PostsSection>
                     {showInput ? <InputPostBoxSection /> : ''}
-                    <PostBox />
+                    <PostBox choosePosts={choosePosts}/>
                 </PostsSection>
                 <TrendingTopics />
             </Section>

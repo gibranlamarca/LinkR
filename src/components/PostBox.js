@@ -10,26 +10,25 @@ import { AiFillDelete } from "react-icons/ai";
 import axios from 'axios';
 import Modal from "./Modal";
 
-export default function PostBox() {
+export default function PostBox({choosePosts}) {
     const { posts, likedPosts, like, dislike, setPosts } = useContext(PostContext);
     const history = useHistory();
-    const [modalIsOpen, setModalIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const {userData} = useContext(UserContext);
-
+    const { userData } = useContext(UserContext);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
     function errorHandle(error) {
         console.error(error);
         setIsLoading(false);
         setModalIsOpen(!modalIsOpen);
         alert("Não foi possível excluir o post")
     }
-    function handleDelete(post) {
-        console.log(posts);
+    function handleDelete() {
         setIsLoading(true);
         axios.delete(
-            `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${post.id}`,
+            `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${currentId}`,
             { headers: { "user-token": userData.token } }
-        ).catch(errorHandle)
+        ).then(()=>choosePosts()).catch(errorHandle)
         setIsLoading(false);
         setModalIsOpen(!modalIsOpen);
     }
@@ -51,8 +50,21 @@ export default function PostBox() {
     } else if (posts.length === 0) {
         return <Post><h1>No posts found</h1></Post>
     }
+    function openModal(id){
+        setModalIsOpen(true);
+        setCurrentId(id);
+    }
     return (
         <>
+            {modalIsOpen ? 
+                <Modal
+                modalIsOpen={modalIsOpen}
+                setModalIsOpen={setModalIsOpen}
+                handleDelete={handleDelete}
+                isLoading={isLoading}
+            />
+            : null
+            }
             {posts.map((post) => {
                 return (
                     <Post key={post.id} heart={liked(post.id) ? 'red' : 'blue'}>
@@ -67,15 +79,11 @@ export default function PostBox() {
                             <div className='usernameAndIcons'>
                                 <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
                                 {parseInt(userData.id) === post.user.id && (
-                                    <AiFillDelete className='trashCan' onClick={() => setModalIsOpen(!modalIsOpen)}/>
+                                    <>
+                                        <AiFillDelete className='trashCan' onClick={() => openModal(post.id)} />
+                                        </>
                                 )}
-                                <Modal 
-                                modalIsOpen={modalIsOpen}
-                                setModalIsOpen={setModalIsOpen}
-                                handleDelete={handleDelete}
-                                isLoading={isLoading}
-                                postId={post.id}
-                                />
+
                             </div>
                             <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
                             <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
