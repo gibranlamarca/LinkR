@@ -19,8 +19,6 @@ export default function PostBox({ choosePosts }) {
     const { userData } = useContext(UserContext);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentId, setCurrentId] = useState(null);
-    //const [isEdit, setIsEdit] = useState(false);
-    const [postText, setPostText] = useState("");
     function errorHandle(error) {
         console.error(error);
         setIsLoading(false);
@@ -63,7 +61,6 @@ export default function PostBox({ choosePosts }) {
     function editText(post) {
         post.isEdit = true;
         setPosts([...posts]);
-        setPostText(post.text);
         setCurrentId(post.id);
     }
 
