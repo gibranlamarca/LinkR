@@ -10,6 +10,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { TiPencil } from "react-icons/ti";
 import axios from 'axios';
 import Modal from "./Modal";
+import EditTitle from "./EditTitle";
 
 export default function PostBox({ choosePosts }) {
     const { posts, likedPosts, like, dislike, followedUsers } = useContext(PostContext);
@@ -18,6 +19,8 @@ export default function PostBox({ choosePosts }) {
     const { userData } = useContext(UserContext);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentId, setCurrentId] = useState(null);
+    const [isEdit, setIsEdit] = useState(false);
+    const [postText, setPostText] = useState("");
     function errorHandle(error) {
         console.error(error);
         setIsLoading(false);
@@ -57,6 +60,11 @@ export default function PostBox({ choosePosts }) {
         setModalIsOpen(true);
         setCurrentId(id);
     }
+    function editText(post) {
+        setIsEdit(!isEdit);
+        setPostText(post.text);
+        setCurrentId(post.id);
+    }
     return (
         <>
             {modalIsOpen ?
@@ -83,13 +91,24 @@ export default function PostBox({ choosePosts }) {
                                 <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
                                 {parseInt(userData.id) === post.user.id && (
                                     <span>
-                                        <TiPencil className='editTitle' />
+                                        <TiPencil className='editTitle' onClick={() => editText(post)} />
                                         <AiFillDelete className='trashCan' onClick={() => openModal(post.id)} />
                                     </span>
                                 )}
 
                             </div>
-                            <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
+                            {isEdit ? (
+                                <EditTitle
+                                    isEdit={isEdit}
+                                    text={postText}
+                                    setPostText={setPostText}
+                                    setIsEdit={setIsEdit}
+                                    userToken={userData.token}
+                                    currentId={currentId}
+                                />
+                            ) : (
+                                    <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
+                                )}
                             <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
                                 <div className='descriptionContainer'>
                                     <p className="titleLink">{post.linkTitle}</p>
