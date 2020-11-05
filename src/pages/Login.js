@@ -22,8 +22,13 @@ export default function Login() {
             const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/sign_in', logIn);
 
             request.then((response) => {
-                console.log(response)
-                setUserData({...response.data.user,'token':response.data.token});
+                const userData = {...response.data.user,'token':response.data.token};
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('avatar',response.data.user.avatar);
+                localStorage.setItem('username',response.data.user.username);
+                localStorage.setItem('id',response.data.user.id);
+                localStorage.setItem('email',response.data.user.email);
+                setUserData(userData);
                 history.push('/timeline');
             });
             request.catch((error) => {
