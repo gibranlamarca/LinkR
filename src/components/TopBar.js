@@ -95,7 +95,9 @@ const InputContainer = styled.div`
     flex-direction:column;
     position:relative;
     font-family: 'Lato',sans-serif;
-    
+    @media (max-width: 600px){
+        display: none!important;
+    }
     ul{
         position:absolute;
         top:35px;
