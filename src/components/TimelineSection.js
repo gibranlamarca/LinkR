@@ -123,6 +123,7 @@ const Page = styled.div`
         .title{
             font-size: 3vw;
             font-family: 'Oswald', sans-serif;
+            overflow-wrap: anywhere;
             @media (max-width: 600px){
                 font-size: 6vw;
             }
