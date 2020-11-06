@@ -11,9 +11,10 @@ import { TiPencil } from "react-icons/ti";
 import axios from 'axios';
 import Modal from "./Modal";
 import EditTitle from "./EditTitle";
+import getYoutubeID from 'get-youtube-id';
 
 export default function PostBox({ choosePosts }) {
-    const { posts, likedPosts, like, dislike, followedUsers,setPosts } = useContext(PostContext);
+    const { posts, likedPosts, like, dislike, followedUsers, setPosts } = useContext(PostContext);
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const { userData } = useContext(UserContext);
@@ -105,16 +106,26 @@ export default function PostBox({ choosePosts }) {
                             ) : (
                                     <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
                                 )}
-                            <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
-                                <div className='descriptionContainer'>
-                                    <p className="titleLink">{post.linkTitle}</p>
-                                    <p className="small grey">{post.linkDescription}</p>
-                                    <p className="small">{post.link}</p>
-                                </div>
-                                <div className='imgContainer'>
-                                    <img src={post.linkImage} />
-                                </div>
-                            </ImgBox>
+                            {
+                                getYoutubeID(post.link) !== null ?
+                                    <ImgBox>
+                                        <iframe id="ytplayer" type="text/html" width="320" height="180"
+                                            src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=1&origin=http://example.com`} frameborder="0"/>
+                                    </ImgBox>
+
+                                    :
+
+                                    <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
+                                        <div className='descriptionContainer'>
+                                            <p className="titleLink">{post.linkTitle}</p>
+                                            <p className="small grey">{post.linkDescription}</p>
+                                            <p className="small">{post.link}</p>
+                                        </div>
+                                        <div className='imgContainer'>
+                                            <img src={post.linkImage} />
+                                        </div>
+                                    </ImgBox>
+                            }
                         </RightBox>
                     </Post>
                 )
