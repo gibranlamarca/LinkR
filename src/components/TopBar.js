@@ -146,6 +146,7 @@ const Header = styled.header`
     left: 0;
     padding: 0 15px;
     align-items: center;
+    z-index: 100;
     h1{
         font-family: 'Passion One', cursive;
         font-size: 3vw;
