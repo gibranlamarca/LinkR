@@ -22,8 +22,13 @@ export default function Login() {
             const request = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/sign_in', logIn);
 
             request.then((response) => {
-                console.log(response)
-                setUserData({...response.data.user,'token':response.data.token});
+                const userData = {...response.data.user,'token':response.data.token};
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('avatar',response.data.user.avatar);
+                localStorage.setItem('username',response.data.user.username);
+                localStorage.setItem('id',response.data.user.id);
+                localStorage.setItem('email',response.data.user.email);
+                setUserData(userData);
                 history.push('/timeline');
             });
             request.catch((error) => {
@@ -69,11 +74,11 @@ export default function Login() {
                     <p>save, share and discover<br /> the best links on the web</p>
                 </div>
             </TitleContainer>
-            <Aside>
+            <Aside >
                 <form onSubmit={(event) => submitForm(event)}>
                     {
                         signUpState ?
-                            <Form>
+                            <Form color={buttonDisabled ? 'lightgrey' : '#1877F2'}>
                                 <input type="email" placeholder="e-mail" value={signUp.email} onChange={e => setSignUp({ ...signUp, 'email': e.target.value })} />
                                 <input type="password" placeholder="password" value={signUp.password}onChange={e => setSignUp({ ...signUp, 'password': e.target.value })} />
                                 <input type="text" placeholder="username" value={signUp.username}onChange={e => setSignUp({ ...signUp, 'username': e.target.value })} />
@@ -81,7 +86,7 @@ export default function Login() {
                                 <button type="submit">Sign Up</button>
                             </Form>
                             :
-                            <Form>
+                            <Form color={buttonDisabled ? 'lightgrey' : '#1877F2'}>
                                 <input type="email" placeholder="e-mail" value={logIn.email}onChange={e => setLogIn({ ...logIn, 'email': e.target.value })} />
                                 <input type="password" placeholder="password" value={logIn.password}onChange={e => setLogIn({ ...logIn, 'password': e.target.value })} />
                                 <button type="submit">Log In</button>
@@ -182,11 +187,12 @@ const Form = styled.div`
     button{
         font-size: 1.5vw;
         border-radius: 5px;
-        background: #1877F2;
+        background: ${props => props.color};
         height: 50px;
         color:#FFF;
         font-family:inherit;
         margin-bottom: 20px;
+        cursor:pointer;
     }
     @media (max-width: 600px){
         width: 90vw;

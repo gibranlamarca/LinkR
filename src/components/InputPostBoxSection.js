@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import PostContext from '../contexts/PostContext';
 import axios from 'axios';
+import {VscLocation} from 'react-icons/vsc';
 export default function InputPostBoxSection(){
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [location, setLocation] = useState(false);
     const { userData } = useContext(UserContext);
     const { setInputPost, inputPost ,getPosts} = useContext(PostContext);
     function publishPost() {
@@ -18,6 +20,7 @@ export default function InputPostBoxSection(){
             request.then(()=>{
                 setButtonDisabled(false);
                 getPosts();
+                setInputPost({'link':'','text':''});
             });
             request.catch(() => {
                 alert('Houve um erro ao publicar seu link');
@@ -25,16 +28,37 @@ export default function InputPostBoxSection(){
             });
         } else alert("Preencha o campo link!");
     }
+    if(location){
+        if(!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+          } else {
+            navigator.geolocation.getCurrentPosition(success, error);
+          }
+    }
+    function success(position) {
+        const latitude  = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setInputPost({...inputPost,'geolocation':{latitude,longitude}});
+    }
+    function error() {
+      alert('Unable to retrieve your location');
+      setLocation(false);
+    }
+    
     return (
         <InputPostBox>
             <LeftBox>
                 <img src={userData.avatar} />
             </LeftBox>
-            <RightBox>
+            <RightBox color={location ? '#238700' : '#ff4444'}>
                 <h1>O que você tem pra favoritar hoje?</h1>
                 <input placeholder="Insira aqui o link" onChange={e => setInputPost({ ...inputPost, 'link': e.target.value })} value={inputPost.link} />
                 <textarea placeholder="Comentário" onChange={e => setInputPost({ ...inputPost, 'text': e.target.value })} value={inputPost.text}/>
                 <div className="buttonDiv">
+                    <div className='locationBox' onClick={()=>setLocation(!location)}>
+                        <VscLocation/>
+                        {` Localização ${location ? ' Ativada':' Desativada'}`}
+                    </div>
                     <Button onClick={(e) => publishPost()}>
                         {buttonDisabled ? 'Publicando...' : 'Publicar'}
                     </Button>
@@ -49,6 +73,7 @@ const InputPostBox = styled.div`
     border-radius: 16px;
     width: 40vw;
     height: 45%;
+    margin-bottom: 20px;
     @media (max-width: 600px){
         width: 100%;
         border-radius: 0px;
@@ -103,8 +128,18 @@ const RightBox = styled.div`
         padding: 5px 10px;
     }
     .buttonDiv{
+        width:100%;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items:center;
+    }
+    .locationBox{
+        font-size: 14px;
+        color: ${props => props.color};
+        font-family: 'Lato',sans-serif;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
     }
 `;
 const Button = styled.button`
@@ -116,4 +151,5 @@ const Button = styled.button`
     font-family: Lato;
     text-align: center;
     font-size: 14px;
+    cursor: pointer;
 `;

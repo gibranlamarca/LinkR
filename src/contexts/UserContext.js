@@ -13,25 +13,32 @@ export function UserContextProvider(props){
         username:"",
         pictureUrl:""
     };
-    const userDataStruct = {
-        //username:"HerickM",
-        //pictureUrl:"https://pbs.twimg.com/profile_images/802982691478114304/UdQD82ju_400x400.jpg",
-        //id:'49'
-    }
+    const userDataStruct = { 
+        avatar: localStorage.getItem('avatar'),
+        email: localStorage.getItem('email'),
+        id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        username: localStorage.getItem('username')
+    };
     const inputStruct = {
         link: '',
         text:''
     }
     function logOut(){
+        localStorage.removeItem('userData');
         setLogIn(loginStruct);
         setSignUp(signUpStruct);
         setUserData(userDataStruct);
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('email');
+        localStorage.removeItem('id');
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
     }
     const [logIn,setLogIn] = useState(loginStruct);
     const [signUp,setSignUp] = useState(signUpStruct);
     const [userData,setUserData] = useState(userDataStruct);
     const [inputPost, setInputPost] = useState(inputStruct);
-    userData.token = "34d11bbf-f9e9-4934-9b21-ccaada2a1536"; //TEMPORARIO- REMOVER
     return(
         <UserContext.Provider value={{setLogIn,setSignUp,logIn,signUp,setUserData,userData,inputPost,setInputPost,logOut}}>
             {props.children}

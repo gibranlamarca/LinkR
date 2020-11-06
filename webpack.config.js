@@ -14,7 +14,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env','@babel/preset-react']
+            presets: ['@babel/preset-env', '@babel/preset-react']
           }
         }
       }
@@ -26,7 +26,5 @@ module.exports = {
     compress: true,
     port: 9000,
     historyApiFallback: true,
-  },
-  mode: process.env.NODE_ENV === "production" ? "production" : "development",
-  devtool: "source-map",
+  }
 };

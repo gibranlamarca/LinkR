@@ -1,59 +1,148 @@
-import React, { useContext,useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components';
 import PostContext from '../contexts/PostContext';
-import {Link} from 'react-router-dom';
+import UserContext from '../contexts/UserContext';
+import { Link } from 'react-router-dom';
 import ReactHashtag from "react-hashtag";
 import { useHistory } from 'react-router-dom';
-import { IoIosHeartEmpty,IoIosHeart } from "react-icons/io";
+import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
+import { AiFillDelete } from "react-icons/ai";
+import { TiPencil } from "react-icons/ti";
 import axios from 'axios';
-export default function PostBox() {
-    const { posts,likedPosts,like,dislike } = useContext(PostContext);
+import Modal from "./Modal";
+import EditTitle from "./EditTitle";
+import getYoutubeID from 'get-youtube-id';
+import {MdLocationOn} from 'react-icons/md';
+export default function PostBox({ choosePosts }) {
+    const { posts, likedPosts, like, dislike, followedUsers, setPosts } = useContext(PostContext);
     const history = useHistory();
-    function goToHashtag(val){
+    const [isLoading, setIsLoading] = useState(false);
+    const { userData } = useContext(UserContext);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState({});
+    const [showLocation,setShowLocation] =useState(false);
+    function errorHandle(error) {
+        console.error(error);
+        setIsLoading(false);
+        setModalIsOpen(!modalIsOpen);
+        alert("Não foi possível excluir o post")
+    }
+    function handleDelete() {
+        setIsLoading(true);
+        axios.delete(
+            `https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/posts/${currentId}`,
+            { headers: { "user-token": userData.token } }
+        ).then(() => choosePosts()).catch(errorHandle)
+        setIsLoading(false);
+        setModalIsOpen(!modalIsOpen);
+    }
+    function goToHashtag(val) {
         val = val.slice(1);
         history.push(`/hashtag/${val}`)
     }
-    function liked(id){
+    function liked(id) {
         let isLiked = false;
         likedPosts.forEach(post => {
-            if(post.id === id){
+            if (post.id === id) {
                 isLiked = true;
             }
         });
         return isLiked;
     }
-    if(posts === null){
+    if (posts === null) {
         return <Post><h1>Loading posts...</h1></Post>
-    } else if(posts.length === 0){
+    } else if (followedUsers.length === 0 && posts.length === 0) {
+        return <Post><h1>Find people to follow on search!</h1></Post>
+    } else if (posts.length === 0) {
         return <Post><h1>No posts found</h1></Post>
+    }
+    function openModal(id) {
+        setModalIsOpen(true);
+        setCurrentId(id);
+    }
+    function openLocation(post){
+        const {user,geolocation} = post;
+        setShowLocation(true);
+        setCurrentLocation({'position':geolocation,'username':user.username});
+        setModalIsOpen(true);
+    }
+    function editText(post) {
+        post.isEdit = true;
+        setPosts([...posts]);
+        setCurrentId(post.id);
     }
     return (
         <>
+            {modalIsOpen ?
+                <Modal
+                    modalIsOpen={modalIsOpen}
+                    setModalIsOpen={setModalIsOpen}
+                    handleDelete={handleDelete}
+                    isLoading={isLoading}
+                    showLocation={showLocation}
+                    currentLocation={currentLocation}
+                    setShowLocation={setShowLocation}
+                />
+                :
+                ''
+            }
             {posts.map((post) => {
-                return(
-                <Post key={post.id} heart={liked(post.id) ? 'red':'blue'}>
-                    <LeftBox>
-                        <Link to={`/user/${post.user.id}`}><img src={post.user.avatar} /></Link>
-                        <div className='likeContainer'>
-                            {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post.id)}/> : <IoIosHeartEmpty onClick={() => like(post.id)}/>}
-                            <p>{post.likes.length}</p>
-                        </div>
-                    </LeftBox>
-                    <RightBox>
-                    <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
-                       <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
-                        <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
-                            <div className='descriptionContainer'>
-                                <p className="titleLink">{post.linkTitle}</p>
-                                <p className="small grey">{post.linkDescription}</p>
-                                <p className="small">{post.link}</p>
+                return (
+                    <Post key={post.id} heart={liked(post.id) ? 'red' : 'blue'}>
+                        <LeftBox>
+                            <Link to={`/user/${post.user.id}`}><img src={post.user.avatar} /></Link>
+                            <div className='likeContainer'>
+                                {liked(post.id) ? <IoIosHeart className='liked' onClick={() => dislike(post)} /> : <IoIosHeartEmpty className='disliked' onClick={() => like(post)} />}
+                                <p>{post.likes.length}</p>
                             </div>
-                            <div className='imgContainer'>
-                                <img src={post.linkImage} />
+                        </LeftBox>
+                        <RightBox>
+                            <div className='usernameAndIcons'>
+                                <div>
+                                    <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
+                                    {post.hasOwnProperty('geolocation') ?
+                                     <span className='locationContainer' onClick={()=>openLocation(post)}><MdLocationOn/></span> : ''}
+                                </div>
+                                {parseInt(userData.id) === post.user.id && (
+                                    <span>
+                                        <TiPencil className='editTitle' onClick={() => editText(post)} />
+                                        <AiFillDelete className='trashCan' onClick={() => openModal(post.id)} />
+                                    </span>
+                                )}
+
                             </div>
-                        </ImgBox>
-                    </RightBox>
-                </Post>
+                            {post.isEdit ? (
+                                <EditTitle
+                                    post={post}
+                                    userToken={userData.token}
+                                    currentId={currentId}
+                                />
+                            ) : (
+                                    <p><ReactHashtag onHashtagClick={val => goToHashtag(val)}>{post.text}</ReactHashtag></p>
+                                )}
+                            {
+                                getYoutubeID(post.link) !== null ?
+
+                                    <iframe className="ytPlayer" id="ytplayer" type="text/html" width="320" height="180"
+                                        src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=0`} frameborder="0" />
+
+
+                                    :
+
+                                    <ImgBox ImgBox onClick={() => window.open(post.link, '_blank')}>
+                                        <div className='descriptionContainer'>
+                                            <p className="titleLink">{post.linkTitle}</p>
+                                            <p className="small grey">{post.linkDescription}</p>
+                                            <p className="small">{post.link}</p>
+                                        </div>
+                                        <div className='imgContainer'>
+                                            <img src={post.linkImage} />
+                                        </div>
+                                    </ImgBox>
+                            }
+                        </RightBox>
+                    </Post>
                 )
             })}
         </>
@@ -62,11 +151,12 @@ export default function PostBox() {
 
 
 const Post = styled.div`
-    margin-top: 20px;
+    margin-bottom:20px;
     display: flex;
     background: #151515;
     border-radius: 16px;
     width: 40vw;
+    overflow-wrap:anywhere;
     @media (max-width: 600px){
         width: 100%;
         border-radius: 0px;
@@ -102,6 +192,9 @@ const LeftBox = styled.div`
         .liked{
             color:red;
         }
+        .liked,.disliked{
+            cursor:pointer;
+        }
     }
 `;
 const RightBox = styled.div`
@@ -125,6 +218,31 @@ const RightBox = styled.div`
         font-weight:bold;
         color:#FFF;
         cursor:pointer;
+    }
+    .usernameAndIcons{
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+    }
+    .trashCan{
+        color: white;
+        cursor: pointer;
+    }
+    .editTitle{
+        color: white;
+        cursor: pointer;
+        margin-right: 8px;
+    }
+    .locationContainer{
+        margin-left: 5px;
+        padding-top: 2px;
+    }
+    .ytPlayer{
+        margin-top: 10px;
+        display: flex;
+        align-self: center;
+        width: 100%;
+        height: 250px;
     }
 `;
 const ImgBox = styled.div`
