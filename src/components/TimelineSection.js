@@ -5,28 +5,52 @@ import InputPostBoxSection from './InputPostBoxSection';
 import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
+import { DebounceInput } from 'react-debounce-input';
 export default function TimelineSection(props) {
+<<<<<<< HEAD
     const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts, getFollowedUsers,posts } = useContext(PostContext);
+=======
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts, getFollowedUsers } = useContext(PostContext);
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
     const { title } = props;
     const { hashtag } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
     const [showInput, setShowInput] = useState(false);
+    const [searchInput, setSearchInput] = useState('');
+    const [showSearchResult,setShowSearchResult] = useState(false);
+    const { isFollowed } = useContext(PostContext);
+    const [filteredUsers] = useState([]);
     useEffect(() => {
         getFollowedUsers();
         getLikedPosts();
         choosePosts();
     }, [title, hashtag,])
     useEffect(() => {
+<<<<<<< HEAD
         const intID = setInterval(()=>{
             choosePosts();
         },15000);
         return (() => clearInterval(intID));
     }, [posts]);
     function choosePosts() {
+=======
+        const interval = setInterval(() => {
+            choosePosts();
+        }, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
+    function choosePosts() {
+
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
         if (title === 'timeline') {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
+<<<<<<< HEAD
+=======
+
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
@@ -44,6 +68,39 @@ export default function TimelineSection(props) {
 
     return (
         <Page >
+<<<<<<< HEAD
+=======
+            <InputContainer display={(!showSearchResult) ? 'none' : 'block'}>
+                <DebounceInput
+                    minLength={3}
+                    debounceTimeout={300}
+                    placeholder='Search for people and friends'
+                    onChange={e => {
+                        setSearchInput(e.target.value)
+                    }}
+                    onFocus={() => setShowSearchResult(true)}
+                    onBlur={() => setTimeout(() => setShowSearchResult(false), 500)}
+                    value={searchInput} />
+                <ul>
+                    {filteredUsers.length === 0 ?
+                        <li>
+                            No users found
+                    </li>
+                        :
+
+                        filteredUsers.map(user =>
+                            <li>
+                                <Link to={`/user/${user.id}`}>
+                                    <img src={user.avatar} />
+                                    <div>{user.username}</div>
+                                </Link>
+                                {isFollowed(user.id) ? <div className='followed'>{` • following`}</div> : ''}
+                            </li>
+                        )
+                    }
+                </ul>
+            </InputContainer>
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
             <header>
                 <h1 className="title">{displayTitle}</h1>
             </header>
@@ -61,6 +118,9 @@ export default function TimelineSection(props) {
 const Page = styled.div`
     color:#FFF;
     padding-top:100px;
+    @media (max-width:600px){
+        padding-top: 77px;
+    }
     header{
         margin-bottom: 20px;
         display:flex;
@@ -79,6 +139,10 @@ const Page = styled.div`
         .title{
             font-size: 3vw;
             font-family: 'Oswald', sans-serif;
+            overflow-wrap: anywhere;
+            @media (max-width: 600px){
+                font-size: 6vw;
+            }
         }
     }
     @media (max-width: 600px){
@@ -104,4 +168,50 @@ const PostsSection = styled.div`
         width: 100%;
     }
 `;
-
+const InputContainer = styled.div`
+    display:none;
+    flex-direction:column;
+    position:relative;
+    font-family: 'Lato',sans-serif;
+    @media (max-width: 600px){
+        display: flex!important;
+    }
+    ul{
+        position:absolute;
+        top:35px;
+        width:100%;
+        background: #e5e5e5;
+        display: ${props => props.display};
+        border-radius:5px;
+        padding: 15px;
+        li{
+            display:flex;
+            align-items:center;
+            margin-bottom:10px;
+        }
+        a{
+            display:flex;
+        }
+        img{
+            margin-right:10px;
+        }
+    }
+    input{
+        height:40px;
+        width: 400px;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: 'Lato',sans-serif;
+        font-size: 19px;
+        line-height:22.8px;  
+        z-index:99;
+        margin: 0 auto 15px auto;
+        &::placeholder{
+            color: #C6C6C6;
+        }
+    }
+    .followed{
+        margin-left:5px;
+        color: #C5C5C5;
+    }
+`

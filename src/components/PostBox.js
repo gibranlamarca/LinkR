@@ -156,6 +156,7 @@ const Post = styled.div`
     background: #151515;
     border-radius: 16px;
     width: 40vw;
+    overflow-wrap:anywhere;
     @media (max-width: 600px){
         width: 100%;
         border-radius: 0px;

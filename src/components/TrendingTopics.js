@@ -49,6 +49,9 @@ const Section = styled.section`
     height: 400px;
     border-radius: 10px;
     margin: 0 0 0 20px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     @media(max-width: 600px){
         display: none;
     }
