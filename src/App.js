@@ -32,7 +32,7 @@ export default function App(){
                         </Route>
                         <Route path='/hashtag/:hashtag'>
                             <Timeline >
-                                <TimelineSection /> 
+                                <TimelineSection title='hashtag'/> 
                             </Timeline>
                         </Route>
                         <Route path='/user/:id'>

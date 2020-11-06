@@ -6,7 +6,7 @@ import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 export default function TimelineSection(props) {
-    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts,getFollowedUsers} = useContext(PostContext);
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts, getFollowedUsers,posts } = useContext(PostContext);
     const { title } = props;
     const { hashtag } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
@@ -17,46 +17,40 @@ export default function TimelineSection(props) {
         choosePosts();
     }, [title, hashtag,])
     useEffect(() => {
-        const interval = setInterval(()=>{
+        const intID = setInterval(()=>{
             choosePosts();
         },15000);
-        return () => clearInterval(interval);
-    }, []);
-
+        return (() => clearInterval(intID));
+    }, [posts]);
     function choosePosts() {
-        
         if (title === 'timeline') {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
-            
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
             getMyPosts();
-
         } else if (title === 'my likes') {
             setDisplayTitle(title);
             setShowInput(false);
             setPosts(likedPosts);
-
         } else if (hashtag) {
             setDisplayTitle(`# ${hashtag}`);
             setShowInput(false);
             getHashtagPosts(hashtag);
-
         }
     }
 
     return (
         <Page >
-                <header>
-                    <h1 className="title">{displayTitle}</h1>
-                </header>
+            <header>
+                <h1 className="title">{displayTitle}</h1>
+            </header>
             <Section>
                 <PostsSection>
                     {showInput ? <InputPostBoxSection /> : ''}
-                    <PostBox choosePosts={choosePosts}/>
+                    <PostBox choosePosts={choosePosts} />
                 </PostsSection>
                 <TrendingTopics />
             </Section>

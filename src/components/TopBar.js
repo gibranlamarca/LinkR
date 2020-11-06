@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import UserContext from '../contexts/UserContext';
 import { IoIosArrowDown, IoIosSearch } from "react-icons/io";
-import {GoPrimitiveDot} from 'react-icons/go';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
