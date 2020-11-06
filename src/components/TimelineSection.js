@@ -7,7 +7,11 @@ import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 import { DebounceInput } from 'react-debounce-input';
 export default function TimelineSection(props) {
+<<<<<<< HEAD
+    const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts, getFollowedUsers,posts } = useContext(PostContext);
+=======
     const { getPosts, getMyPosts, getHashtagPosts, setPosts, likedPosts, getLikedPosts, getFollowedUsers } = useContext(PostContext);
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
     const { title } = props;
     const { hashtag } = useParams();
     const [displayTitle, setDisplayTitle] = useState('timeline');
@@ -22,6 +26,14 @@ export default function TimelineSection(props) {
         choosePosts();
     }, [title, hashtag,])
     useEffect(() => {
+<<<<<<< HEAD
+        const intID = setInterval(()=>{
+            choosePosts();
+        },15000);
+        return (() => clearInterval(intID));
+    }, [posts]);
+    function choosePosts() {
+=======
         const interval = setInterval(() => {
             choosePosts();
         }, 15000);
@@ -30,31 +42,34 @@ export default function TimelineSection(props) {
 
     function choosePosts() {
 
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
         if (title === 'timeline') {
             setDisplayTitle(title);
             setShowInput(true);
             getPosts();
+<<<<<<< HEAD
+=======
 
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
         } else if (title === 'my posts') {
             setDisplayTitle(title);
             setShowInput(false);
             getMyPosts();
-
         } else if (title === 'my likes') {
             setDisplayTitle(title);
             setShowInput(false);
             setPosts(likedPosts);
-
         } else if (hashtag) {
             setDisplayTitle(`# ${hashtag}`);
             setShowInput(false);
             getHashtagPosts(hashtag);
-
         }
     }
 
     return (
         <Page >
+<<<<<<< HEAD
+=======
             <InputContainer display={(!showSearchResult) ? 'none' : 'block'}>
                 <DebounceInput
                     minLength={3}
@@ -85,6 +100,7 @@ export default function TimelineSection(props) {
                     }
                 </ul>
             </InputContainer>
+>>>>>>> c0808fb1f267bf86b6519b6e3431e9674d8256e9
             <header>
                 <h1 className="title">{displayTitle}</h1>
             </header>
