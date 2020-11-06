@@ -45,6 +45,7 @@ export default function Modal({
               </button>
             </header>
             <iframe
+            className='map'
             width="600"
             height="450"
             frameborder="0" 
@@ -86,6 +87,14 @@ const MapContainer = styled.div`
     justify-content:space-between;
     align-items:center;
     font-size: 26px;
+  }
+  @media(max-width:600px){
+    &{
+      width: 100%;
+    }
+    .map{
+      width:300px;
+    }
   }
 `
 const Title = styled.h1`
