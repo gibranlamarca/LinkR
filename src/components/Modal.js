@@ -1,7 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
-
+import {AiFillCloseSquare} from 'react-icons/ai';
 ReactModal.setAppElement("body");
 
 const customStyles = {
@@ -22,9 +22,12 @@ export default function Modal({
   modalIsOpen,
   setModalIsOpen,
   handleDelete,
-  isLoading
+  isLoading,
+  showLocation,
+  currentLocation,
+  setShowLocation
 }) {
-
+  console.log(currentLocation);
   return (
     <ReactModal
       isOpen={modalIsOpen}
@@ -34,22 +37,50 @@ export default function Modal({
       {isLoading ? (
         <h1>Loading...</h1>
       ) : (
-        <>
-          <Title>
-            Tem certeza que deseja excluir essa publicação?
+          showLocation ?
+          <MapContainer>
+            <iframe
+            width="600"
+            height="450"
+            frameborder="0" 
+            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBXNwsnEb8z0gos8goYDmbKtqwrUtBNSbU&q=${currentLocation.latitude},${currentLocation.longitude}`} >
+          </iframe>
+            <button onClick={() => {setModalIsOpen(!modalIsOpen),setShowLocation(false)}}>
+              <AiFillCloseSquare/>
+            </button>
+          </MapContainer>
+            :
+            <>
+              <Title>
+                Tem certeza que deseja excluir essa publicação?
           </Title>
-          <ButtonsContainer>
-            <BackButton onClick={() => setModalIsOpen(!modalIsOpen)}>
-              Não, voltar
+              <ButtonsContainer>
+                <BackButton onClick={() => setModalIsOpen(!modalIsOpen)}>
+                  Não, voltar
             </BackButton>
-            <DeleteButton onClick={() => handleDelete()}>Sim, excluir</DeleteButton>
-          </ButtonsContainer>
-        </>
-      )}
+                <DeleteButton onClick={() => handleDelete()}>Sim, excluir</DeleteButton>
+              </ButtonsContainer>
+            </>
+        )}
     </ReactModal>
   );
 }
 
+const MapContainer = styled.div`
+  display:flex;
+  justify-content:center;
+  border-radius:10px;
+  position:relative;
+  button{
+    position:absolute;
+    color:#fff;
+    height: 50px;
+    width:50px;
+    top: -6px;
+    right: -48px;
+    font-size: 40px;
+  }
+`
 const Title = styled.h1`
   font-family: Lato;
   font-weight: bold;

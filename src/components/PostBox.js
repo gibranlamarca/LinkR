@@ -12,7 +12,7 @@ import axios from 'axios';
 import Modal from "./Modal";
 import EditTitle from "./EditTitle";
 import getYoutubeID from 'get-youtube-id';
-
+import {MdLocationOn} from 'react-icons/md';
 export default function PostBox({ choosePosts }) {
     const { posts, likedPosts, like, dislike, followedUsers, setPosts } = useContext(PostContext);
     const history = useHistory();
@@ -20,6 +20,8 @@ export default function PostBox({ choosePosts }) {
     const { userData } = useContext(UserContext);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentId, setCurrentId] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState({});
+    const [showLocation,setShowLocation] =useState(false);
     function errorHandle(error) {
         console.error(error);
         setIsLoading(false);
@@ -59,12 +61,18 @@ export default function PostBox({ choosePosts }) {
         setModalIsOpen(true);
         setCurrentId(id);
     }
+    function openLocation(position){
+        setShowLocation(true);
+        setCurrentLocation(position);
+        setModalIsOpen(true);
+    }
     function editText(post) {
         post.isEdit = true;
         setPosts([...posts]);
         setCurrentId(post.id);
     }
 
+    console.log(posts);
     return (
         <>
             {modalIsOpen ?
@@ -73,8 +81,12 @@ export default function PostBox({ choosePosts }) {
                     setModalIsOpen={setModalIsOpen}
                     handleDelete={handleDelete}
                     isLoading={isLoading}
+                    showLocation={showLocation}
+                    currentLocation={currentLocation}
+                    setShowLocation={setShowLocation}
                 />
-                : null
+                :
+                ''
             }
             {posts.map((post) => {
                 return (
@@ -88,7 +100,11 @@ export default function PostBox({ choosePosts }) {
                         </LeftBox>
                         <RightBox>
                             <div className='usernameAndIcons'>
-                                <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
+                                <div>
+                                    <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
+                                    {post.hasOwnProperty('geolocation') ?
+                                     <span className='locationContainer' onClick={()=>openLocation(post.geolocation)}><MdLocationOn/></span> : ''}
+                                </div>
                                 {parseInt(userData.id) === post.user.id && (
                                     <span>
                                         <TiPencil className='editTitle' onClick={() => editText(post)} />
@@ -108,10 +124,10 @@ export default function PostBox({ choosePosts }) {
                                 )}
                             {
                                 getYoutubeID(post.link) !== null ?
-                                   
+
                                     <iframe id="ytplayer" type="text/html" width="320" height="180"
-                                    src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=0`} frameborder="0"/>
-                                    
+                                        src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=0`} frameborder="0" />
+
 
                                     :
 

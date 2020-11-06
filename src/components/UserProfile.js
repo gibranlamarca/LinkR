@@ -6,6 +6,7 @@ import PostBox from './PostBox';
 import PostContext from '../contexts/PostContext';
 import { useParams } from 'react-router';
 import UserContext from '../contexts/UserContext';
+
 export default function TimelineSection(props) {
     const { posts, getLikedPosts,getFollowedUsers,followedUsers,setPosts } = useContext(PostContext);
     const {userData} = useContext(UserContext);
