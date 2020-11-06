@@ -124,7 +124,7 @@ export default function PostBox({ choosePosts }) {
                             {
                                 getYoutubeID(post.link) !== null ?
 
-                                    <iframe id="ytplayer" type="text/html" width="320" height="180"
+                                    <iframe className="ytPlayer" id="ytplayer" type="text/html" width="320" height="180"
                                         src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=0`} frameborder="0" />
 
 
@@ -221,6 +221,7 @@ const RightBox = styled.div`
     .usernameAndIcons{
         display: flex;
         justify-content: space-between;
+        align-content: center;
     }
     .trashCan{
         color: white;
@@ -230,6 +231,16 @@ const RightBox = styled.div`
         color: white;
         cursor: pointer;
         margin-right: 8px;
+    }
+    .locationContainer{
+        margin-left: 5px;
+        padding-top: 2px;
+    }
+    .ytPlayer{
+        margin-top: 10px;
+        display: flex;
+        align-self: center;
+        width: 100%;
     }
 `;
 const ImgBox = styled.div`
