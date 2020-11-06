@@ -110,7 +110,7 @@ export default function PostBox({ choosePosts }) {
                                 getYoutubeID(post.link) !== null ?
                                     <ImgBox>
                                         <iframe id="ytplayer" type="text/html" width="320" height="180"
-                                            src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=1&origin=http://example.com`} frameborder="0"/>
+                                            src={`http://www.youtube.com/embed/${getYoutubeID(post.link)}?autoplay=0`} frameborder="0"/>
                                     </ImgBox>
 
                                     :
