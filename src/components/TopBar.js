@@ -36,9 +36,9 @@ export default function Topbar() {
     return (
         <Header>
             <h1>
-                <Link to='/timeline'>linkr</Link>
+                <Link to='/timeline' onClick={()=>window.scrollTo(0,0)}>linkr</Link>
             </h1>
-
+            
             <InputContainer display={(!showSearchResult) ? 'none' : 'block'}>
                 <DebounceInput
                     minLength={3}
