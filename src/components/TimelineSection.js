@@ -24,7 +24,7 @@ export default function TimelineSection(props) {
     useEffect(() => {
         const intID = setInterval(()=>{
             choosePosts();
-        },5000);
+        },15000);
         return (() => clearInterval(intID));
     }, [posts]);
     function choosePosts() {
