@@ -40,7 +40,7 @@ export default function Modal({
           <MapContainer>
             <header>
               <h1>{`${currentLocation.username}'s Location`}</h1>
-              <button onClick={() => {setModalIsOpen(!modalIsOpen),setShowLocation(false)}}>
+              <button onClick={() => {setModalIsOpen(!modalIsOpen),setShowLocation(false)}} style="cursor: pointer">
                 <AiFillCloseSquare/>
               </button>
             </header>

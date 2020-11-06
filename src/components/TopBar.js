@@ -200,6 +200,7 @@ const Menu = styled.div`
         }
     }
     .arrowDown{
+        cursor: pointer;
         @media(max-width:600px){
             font-size: 8vw;
         }
