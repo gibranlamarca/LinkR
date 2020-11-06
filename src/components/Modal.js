@@ -27,7 +27,6 @@ export default function Modal({
   currentLocation,
   setShowLocation
 }) {
-  console.log(currentLocation);
   return (
     <ReactModal
       isOpen={modalIsOpen}

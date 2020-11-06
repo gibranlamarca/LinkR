@@ -48,7 +48,7 @@ export default function Topbar() {
                         setSearchInput(e.target.value)
                     }}
                     onFocus={()=> setShowSearchResult(true)}
-                    onBlur={()=>setShowSearchResult(false)}
+                    onBlur={()=> setTimeout(()=> setShowSearchResult(false),500)}
                     value={searchInput} />
                 <ul>
                     {filteredUsers.length === 0 ? 

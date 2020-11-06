@@ -21,18 +21,24 @@ export default function TimelineSection(props) {
     function getUserPosts(){
         const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}/posts`, {headers});
         request.then((response) => {
-            console.log(response);
             setPosts(response.data.posts);
-            setDisplayTitle(`${response.data.posts[0].user.username}'s Posts`);
-            setDisplayimg(response.data.posts[0].user.avatar);
+           
         });
         request.catch(e=>alert('Houve uma falha ao obter os posts, por favor atualize a página'));
     }
+    function getUserData(){
+        const request = axios.get(`https://mock-api.bootcamp.respondeai.com.br/api/v1/linkr/users/${id}`, {headers});
+        request.then((response)=>{
+            setDisplayTitle(`${response.data.user.username}'s Posts`);
+            setDisplayimg(response.data.user.avatar);;
+        });
+    }
     useEffect(() => {
+        getUserData();
         getFollowedUsers();
         getLikedPosts();
         getUserPosts();
-    }, [])
+    }, [id]);
     useEffect(() => {
         isFollowed();
     }, [followedUsers])
