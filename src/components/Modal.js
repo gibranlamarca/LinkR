@@ -39,15 +39,19 @@ export default function Modal({
       ) : (
           showLocation ?
           <MapContainer>
+            <header>
+              <h1>{`${currentLocation.username}'s Location`}</h1>
+              <button onClick={() => {setModalIsOpen(!modalIsOpen),setShowLocation(false)}}>
+                <AiFillCloseSquare/>
+              </button>
+            </header>
             <iframe
             width="600"
             height="450"
             frameborder="0" 
-            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBXNwsnEb8z0gos8goYDmbKtqwrUtBNSbU&q=${currentLocation.latitude},${currentLocation.longitude}`} >
+            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBXNwsnEb8z0gos8goYDmbKtqwrUtBNSbU&q=${currentLocation.position.latitude},${currentLocation.position.longitude}`} >
           </iframe>
-            <button onClick={() => {setModalIsOpen(!modalIsOpen),setShowLocation(false)}}>
-              <AiFillCloseSquare/>
-            </button>
+            
           </MapContainer>
             :
             <>
@@ -68,17 +72,21 @@ export default function Modal({
 
 const MapContainer = styled.div`
   display:flex;
+  flex-direction:column;
   justify-content:center;
   border-radius:10px;
-  position:relative;
   button{
-    position:absolute;
     color:#fff;
     height: 50px;
     width:50px;
-    top: -6px;
-    right: -48px;
     font-size: 40px;
+  }
+  header{
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size: 26px;
   }
 `
 const Title = styled.h1`

@@ -61,9 +61,10 @@ export default function PostBox({ choosePosts }) {
         setModalIsOpen(true);
         setCurrentId(id);
     }
-    function openLocation(position){
+    function openLocation(post){
+        const {user,geolocation} = post;
         setShowLocation(true);
-        setCurrentLocation(position);
+        setCurrentLocation({'position':geolocation,'username':user.username});
         setModalIsOpen(true);
     }
     function editText(post) {
@@ -71,8 +72,6 @@ export default function PostBox({ choosePosts }) {
         setPosts([...posts]);
         setCurrentId(post.id);
     }
-
-    console.log(posts);
     return (
         <>
             {modalIsOpen ?
@@ -103,7 +102,7 @@ export default function PostBox({ choosePosts }) {
                                 <div>
                                     <Link to={`/user/${post.user.id}`}>{post.user.username}</Link>
                                     {post.hasOwnProperty('geolocation') ?
-                                     <span className='locationContainer' onClick={()=>openLocation(post.geolocation)}><MdLocationOn/></span> : ''}
+                                     <span className='locationContainer' onClick={()=>openLocation(post)}><MdLocationOn/></span> : ''}
                                 </div>
                                 {parseInt(userData.id) === post.user.id && (
                                     <span>
